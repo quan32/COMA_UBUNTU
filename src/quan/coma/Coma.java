@@ -77,8 +77,9 @@ public class Coma {
 		//Load graph 1
 		Graph graphSrc = loadGraph(fileSrc, null);
 		
-		// load abbreviations to lists
+		
  		ListParser parser = new ListParser(false);
+ 	// load abbreviations to lists
  		parser.parseSingleSource(fileAbbreviations);
  		ArrayList<String> abbrevList = parser.getList1();
  		ArrayList<String> fullFormList =  parser.getList2();

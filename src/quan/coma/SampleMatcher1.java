@@ -23,6 +23,8 @@ implements IAttributeObjectMatcher
 	private IStringTokenizer tokenizer;
 	ArrayList<String> wordList = null; ArrayList<String> synonymList = null;
 	private ArrayList<ArrayList<String>> synonymPairList = new ArrayList();
+	ArrayList<String> abbrevList = null; ArrayList<String> fullFormList = null;
+	private ArrayList<ArrayList<String>> abbrevPairList = new ArrayList();
 	public static final String NGRAM_KEY = "ifuice_ngram_key";
 	public static final String NULL = "<NULL>";
 	protected static final String[] NULL_TRGS = new String[0];
@@ -75,6 +77,37 @@ implements IAttributeObjectMatcher
 				syn.add((String)wordList.get(i));
 				syn.add((String)synonymList.get(i));
 				this.synonymPairList.add(syn);
+			}
+		}
+	}
+	
+	public SampleMatcher1(String attr1, String attr2, float threshold, ArrayList<String> wordList, ArrayList<String> synonymList
+			, ArrayList<String> abbrevList, ArrayList<String> fullFormList)
+	{
+		super(attr1, attr2, threshold);
+		this.tokenizer = new ComaStringTokenizer1();
+		
+		if ((wordList != null) && (synonymList != null)) {
+			this.wordList = wordList;
+			this.synonymList = synonymList;
+
+			for (int i = 0; i < wordList.size(); i++) {
+				ArrayList syn = new ArrayList();
+				syn.add((String)wordList.get(i));
+				syn.add((String)synonymList.get(i));
+				this.synonymPairList.add(syn);
+			}
+		}
+		
+		if ((abbrevList != null) && (fullFormList != null)) {
+			this.abbrevList = abbrevList;
+			this.fullFormList = fullFormList;
+
+			for (int i = 0; i < abbrevList.size(); i++) {
+				ArrayList abbrev = new ArrayList();
+				abbrev.add((String)abbrevList.get(i));
+				abbrev.add((String)fullFormList.get(i));
+				this.abbrevPairList.add(abbrev);
 			}
 		}
 	}
@@ -198,11 +231,6 @@ implements IAttributeObjectMatcher
 					if (right_string != "<NULL>")
 					{
 						float sim = 0.0f;
-						//try
-						
-						System.out.println("Can than:"+i++);
-						System.out.println("Left string:"+left_string+" : "+isNumber(left_string));
-						System.out.println("Right string:"+right_string+" :"+isNumber(right_string));
 						
 						//if left and right are number
 						if(isNumber(left_string) && isNumber(right_string)){
@@ -233,6 +261,19 @@ implements IAttributeObjectMatcher
 								if (synonymSim > sim)
 								{
 									sim = synonymSim;
+								}
+							}
+							
+							//compute similarity base abbrev list
+							if (this.abbrevList != null) {
+								System.out.println("Abbrev here");
+								System.out.println("Abbrev:"+left_string+"Full:"+right_string);
+								System.out.println("Result:"+isDirectAbbrev(left_string, right_string));
+								float abbrevSim = 0.0F;
+								if (isDirectAbbrev(left_string, right_string)) abbrevSim = 1.0F;
+								if (abbrevSim > sim)
+								{
+									sim = abbrevSim;
 								}
 							}
 						}					
@@ -731,6 +772,18 @@ implements IAttributeObjectMatcher
 			}
 		return false;
 	}
+	boolean isDirectAbbrev(String elem1, String elem2)
+	{
+		if ((elem1 == null) || (elem2 == null)) return false;
+		ArrayList abbrevList = getDirectAbbrev(elem1);
+		if (abbrevList != null)
+			for (int i = 0; i < abbrevList.size(); i++) {
+				String abbrev = (String)abbrevList.get(i);
+				if (abbrev.equalsIgnoreCase(elem2))
+					return true;
+			}
+		return false;
+	}
 
 	ArrayList<String> getDirectSynonyms(String elem)
 	{
@@ -751,6 +804,28 @@ implements IAttributeObjectMatcher
 		}
 		if (!synList.isEmpty())
 			return synList;
+		return null;
+	}
+	
+	ArrayList<String> getDirectAbbrev(String elem)
+	{
+		if (elem == null) return null;
+		ArrayList abbrevList = new ArrayList();
+		for (int i = 0; i < this.abbrevPairList.size(); i++) {
+			ArrayList abbrev = (ArrayList)this.abbrevPairList.get(i);
+			String word1 = (String)abbrev.get(0);
+			String word2 = (String)abbrev.get(1);
+
+			word1 = word1.replaceAll(" ", "");
+			word2 = word2.replaceAll(" ", "");
+
+			if (elem.equalsIgnoreCase(word1))
+				abbrevList.add(word2);
+			else if (elem.equalsIgnoreCase(word2))
+				abbrevList.add(word1);
+		}
+		if (!abbrevList.isEmpty())
+			return abbrevList;
 		return null;
 	}
 

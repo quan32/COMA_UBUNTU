@@ -1096,7 +1096,7 @@ public class ExecWorkflow {
 //		}		
 		
 		
-	    IObjectMatcher matcher = SimilarityMeasure.getMatcher(simmeas.getId(),wordList, synonymList);
+	    IObjectMatcher matcher = SimilarityMeasure.getMatcher(simmeas.getId(),wordList, synonymList, abbrevList, fullFormList);
 //	    if (matcher.getClass().equals(FeatVectorMatcher.class)){
 //	    	((FeatVectorMatcher)matcher).setCache(resultCaches.get(simmeas.getName()));
 //	    }

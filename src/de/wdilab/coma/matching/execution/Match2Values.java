@@ -48,7 +48,7 @@ public class Match2Values {
 		// initiate mapping - here get the match results stored
 	    final MainMemoryMapping mmm = new MainMemoryMapping(oipA, oipB);
 	    
-		IObjectMatcher matcher = SimilarityMeasure.getMatcher(simmeasId, null, null);
+		IObjectMatcher matcher = SimilarityMeasure.getMatcher(simmeasId, null, null, null, null);
 	    if (matcher==null) return -1;
 	    try {
 			// execute the matching over using the "filled" instance provider and write results into the mapping

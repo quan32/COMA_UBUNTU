@@ -239,7 +239,7 @@ public class SimilarityMeasure{
 	    	return s;
 	    }
 
-	    public static IObjectMatcher getMatcher(int id, ArrayList<String> wordList, ArrayList<String> synonymList){
+	    public static IObjectMatcher getMatcher(int id, ArrayList<String> wordList, ArrayList<String> synonymList, ArrayList<String> abbrevList, ArrayList<String> fullFormList){
 
 				 IObjectMatcher matcher = null;
 				switch (id) {
@@ -257,7 +257,8 @@ public class SimilarityMeasure{
 				case SIM_STR_TRIGRAM://
 				    // matcher =  new ComaTrigram2("attr", "attr", DEFAULT_THRESHOLD, wordList, synonymList);
 //					matcher =  new IFuiceTrigram("attr", "attr", DEFAULT_THRESHOLD);
-					matcher =  new SampleMatcher1("attr", "attr", DEFAULT_THRESHOLD, wordList, synonymList);
+					matcher =  new SampleMatcher1("attr", "attr", DEFAULT_THRESHOLD, wordList, synonymList
+							, abbrevList, fullFormList);
 					break;
 				case SIM_STR_EDITDIST: //+
 					// TODO check Levenshtein EDJoin
